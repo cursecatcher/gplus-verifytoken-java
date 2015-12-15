@@ -16,28 +16,18 @@ package verifytoken;
  * limitations under the License.
  */
 
-//import com.google.api.client.auth.oauth2.TokenResponseException;
-//import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-//import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
-//import com.google.api.client.http.GenericUrl;
-//import com.google.api.client.http.HttpResponse;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.jackson.JacksonFactory;
+import java.io.IOException;
 
 import com.google.api.services.oauth2.Oauth2;
 import com.google.api.services.oauth2.model.Tokeninfo;
 
-import com.google.gson.Gson;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 
-import org.json.JSONObject;
-import org.json.JSONException;
-import org.json.JSONArray;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
 
-
-import java.io.IOException;
+import com.google.api.client.json.jackson.JacksonFactory;
 
 /**
  * Simple server to demonstrate token verification.
@@ -85,7 +75,7 @@ public class Verify {
             // This is not a valid token.
             idStatus.setValid(false);
             idStatus.setId("");
-            idStatus.setMessage("Invalid ID Token.");
+            idStatus.setMessage("Invalid ID Token.");       
           } else {
             idStatus.setValid(true);
             String gplusId = (String)jwt.get("sub");
@@ -153,21 +143,7 @@ public class Verify {
     }
   }
 
-  /**
-   * JSON response to verification request.
-   *
-   * Example JSON response:
-   * {
-   *   "id_token_status": {
-   *     "info": "12345",
-   *     "valid": True
-   *   },
-   *   "access_token_status": {
-   *     "Access Token not meant for this app.",
-   *     "valid": False
-   *   }
-   * }
-   */
+  /** JSON response to verification request. */
   public static class VerificationResponse {
     public TokenStatus id_token_status;
     public TokenStatus access_token_status;
