@@ -41,32 +41,34 @@ public class ServletLogin extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
             
             String name = (String) request.getParameter("name"), 
-                   surname = (String) request.getParameter("surname"), 
-                   email = (String) request.getParameter("email"), 
+                   surname = (String) request.getParameter("surname"),
                    idToken = (String) request.getParameter("idToken"), 
                    access_token = (String) request.getParameter("access_token");
             
-            String jsonVerify = Verify.getUserId(idToken, access_token); 
+            String[] verify = Verify.getUserCredentials(idToken, access_token); 
            
+            
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
             out.println("<title>Servlet ServletLogin</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Hello " + name + " " + surname + "</h1>");
-            out.println("Your email is " + email + "<br>"); 
-           
+   
+            if (verify != null) {
+                out.println("<h1>Hello " + name + " " + surname + "</h1>");
+                out.println("Your email is " + verify[1] + "<br>"); 
+         
+                out.println("Autentication..."); 
+                out.println(verify[0]);
+            }
+            else {
+                out.println("Si e' verificato un problema nell'autenticazione");
+            }
             
-            out.println("Autentication...");
-            
-            out.println(jsonVerify); 
-             
 
-            
             out.println("</body>");
             out.println("</html>");
         }
