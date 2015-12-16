@@ -44,25 +44,26 @@ public class Verify {
   /** Default JSON factory to use to deserialize JSON.   */
   private static final JacksonFactory JSON_FACTORY = new JacksonFactory();
 
-  public static String getUserId(String idToken, String accessToken) {
+  /* Restituisce un array di due stringhe
+   * res[0] : userId
+   * res[1] : userEmail  */
+  public static String[] getUserCredentials(String idToken, String accessToken) {
       VerificationResponse tokenStatus = verify(idToken, accessToken);
       TokenStatus idTokenStatus = tokenStatus.id_token_status, 
                   accessTokenStatus = tokenStatus.access_token_status; 
-      String userId = null;
-      /*
-      VerificationResponse:
-            public TokenStatus id_token_status;
-            public TokenStatus access_token_status;
-      */
+      String[] res = null;
       
       if (idTokenStatus.valid && accessTokenStatus.valid)
-          if (idTokenStatus.gplus_id.equals(accessTokenStatus.gplus_id))
-              userId = idTokenStatus.gplus_id; 
+          if (idTokenStatus.gplus_id.equals(accessTokenStatus.gplus_id)) {
+              res = new String[2];
+              res[0] = idTokenStatus.gplus_id; 
+              res[1] = idTokenStatus.gplus_email;
+          }
       
-      return userId;
+      return res;
   }
   
-   private static VerificationResponse verify(String idToken, String accessToken) {
+  private static VerificationResponse verify(String idToken, String accessToken) {
 
         TokenStatus idStatus = new TokenStatus();
         if (idToken != null) {
@@ -76,10 +77,11 @@ public class Verify {
             idStatus.setValid(false);
             idStatus.setId("");
             idStatus.setMessage("Invalid ID Token.");       
-          } else {
+          } 
+          else {
             idStatus.setValid(true);
-            String gplusId = (String)jwt.get("sub");
-            idStatus.setId(gplusId);
+            idStatus.setId((String)jwt.get("sub")); 
+            idStatus.setEmail((String)jwt.get("email"));
             idStatus.setMessage("ID Token is valid.");
           }
         } else {
@@ -121,12 +123,15 @@ public class Verify {
   /** JSON representation of a token's status.  */
   public static class TokenStatus {
     public boolean valid;
-    public String gplus_id;
+    public String gplus_id;     
+    public String gplus_email;
     public String message;
+
 
     public TokenStatus() {
       valid = false;
       gplus_id = "";
+      gplus_email = "";
       message = "";
     }
 
@@ -136,6 +141,10 @@ public class Verify {
 
     public void setId(String gplus_id) {
       this.gplus_id = gplus_id;
+    }
+    
+    public void setEmail(String gplus_mail) {
+        this.gplus_email = gplus_mail;
     }
 
     public void setMessage(String message) {
