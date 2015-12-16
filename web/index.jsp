@@ -36,7 +36,7 @@
             
             <input id="id_name" type="text" name="name">
             <input id="id_surname" type="text" name="surname">
-            <input id="id_email" type="email" name="email">
+        <!--    <input id="id_email" type="email" name="email"> -->
             <input id="id_token" type="text" name="idToken">
             <input id="id_access_token" type="text" name="access_token">
             
@@ -94,17 +94,10 @@ function getProfileData() {
         var profile = res.result; 
         
         var name = profile.name.givenName; 
-        var surname = profile.name.familyName; 
-        var email = ""; 
-
-        for (var i = 0; i < profile.emails.length; i++) 
-            if (profile.emails[i].type === "account") 
-                email = profile.emails[i].value; 
+        var surname = profile.name.familyName;
         
         $('#id_name').val(name);        
         $('#id_surname').val(surname); 
-        $('#id_email').val(email); 
-        
      //   $('#userParameters').submit();     
       }, function(err) {
         var error = err.result;
