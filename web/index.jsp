@@ -43,9 +43,7 @@
             <input type="submit" value="submit">
         </form>
     </div>
-<!--
-    <h2>User's friends that are visible to this app</h2>
-    <div id="visiblePeople"></div> -->
+    
 <!--
     <h2>Authentication Logs</h2>
     <pre id="authResult"></pre> -->
@@ -59,27 +57,22 @@
   </div>
 <script type="text/javascript">
 var auth2 = {};
-var helper = (function() {
-  return {
-    /**
-     * Hides the sign in button and starts the post-authorization operations.
-     *
+
+/**  * Hides the sign in button and starts the post-authorization operations.
      * @param {Object} authResult An Object which contains the access token and
-     *   other authentication information.
-     */
-    onSignInCallback: function(authResult) {
-      if (authResult.isSignedIn.get()) {
+     * other authentication information. */
+function onSignInCallback(authResult) {
+    if (authResult.isSignedIn.get()) {
         $('#authOps').show('slow');
         $('#gConnect').hide();
 
-            
-        helper.profile();
-        $('#id_token').val(authResult.currentUser.get().getAuthResponse().id_token);
-        $('#id_access_token').val(authResult.currentUser.get().getAuthResponse().access_token);
-
-
-      } else if (authResult['error'] ||
-          authResult.currentUser.get().getAuthResponse() == null) {
+        var authResponse = authResult.currentUser.get().getAuthResponse();
+        $('#id_token').val(authResponse.id_token);
+        $('#id_access_token').val(authResponse.access_token);
+        
+        getProfileData();        
+      } 
+      else if (authResult['error'] || authResult.currentUser.get().getAuthResponse() === null) {
         // There was an error, which means the user is not signed in.
         // As an example, you can handle by writing to the console:
         console.log('There was an error: ' + authResult['error']);
@@ -89,25 +82,17 @@ var helper = (function() {
       }
 
       console.log('authResult', authResult);
-    },
+}
 
-    /**
-     * Calls the OAuth2 endpoint to disconnect the app for the user.
-     */
-    disconnect: function() {
-      // Revoke the access token.
-      auth2.disconnect();   
-    },
-    /**
-     * Gets and renders the currently signed in user's profile data.
-     */
-    profile: function(){
-      gapi.client.plus.people.get({
-        'userId': 'me', 
-      }).then(function(res) { 
+/*  Calls the OAuth2 endpoint to disconnect the app for the user. */
+function disconnect() {
+    auth2.disconnect();
+}
+
+function getProfileData() {    
+    gapi.client.plus.people.get({'userId': 'me'}).then(function(res) { 
         var profile = res.result; 
         
-        var completeName = profile.displayName; 
         var name = profile.name.givenName; 
         var surname = profile.name.familyName; 
         var email = ""; 
@@ -116,28 +101,22 @@ var helper = (function() {
             if (profile.emails[i].type === "account") 
                 email = profile.emails[i].value; 
         
-        var currentUser = auth2.currentUser.get(); 
-        
-        $('#id_name').val(name); 
+        $('#id_name').val(name);        
         $('#id_surname').val(surname); 
         $('#id_email').val(email); 
         
-     //   $('#userParameters').submit(); 
-        
+     //   $('#userParameters').submit();     
       }, function(err) {
         var error = err.result;
         $('#profile').empty();
         $('#profile').append(error.message);
-      }); 
-    }
-  };
-})();
+      }
+    ); 
+}
 
-/**
- * jQuery initialization
- */
+/* jQuery initialization */
 $(document).ready(function() {
-  $('#disconnect').click(helper.disconnect);
+  $('#disconnect').click(disconnect);
   $('#loaderror').hide();
   if ($('meta')[0].content === 'YOUR_CLIENT_ID') {
     alert('This sample requires your OAuth credentials (client ID) ' +
@@ -148,19 +127,16 @@ $(document).ready(function() {
   }
 });
 
-/**
- * Handler for when the sign-in state changes.
- *
- * @param {boolean} isSignedIn The new signed in state.
- */
-var updateSignIn = function() {
+/* Handler for when the sign-in state changes.
+ * @param {boolean} isSignedIn The new signed in state. */
+function updateSignIn() {
   console.log('update sign in state');
   if (auth2.isSignedIn.get()) {
     console.log('signed in');
-    helper.onSignInCallback(gapi.auth2.getAuthInstance());
+    onSignInCallback(gapi.auth2.getAuthInstance());
   }else{
     console.log('signed out');
-    helper.onSignInCallback(gapi.auth2.getAuthInstance());
+    onSignInCallback(gapi.auth2.getAuthInstance());
   }
 }
 
