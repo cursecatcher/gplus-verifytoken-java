@@ -14,10 +14,10 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.client.json.jackson.JacksonFactory;
 
 
-public class Checker {
+class Checker {
 
     private final List mClientIDs;
     private final String mAudience;
@@ -29,7 +29,7 @@ public class Checker {
         mClientIDs = Arrays.asList(clientIDs);
         mAudience = audience;
         NetHttpTransport transport = new NetHttpTransport();
-        mJFactory = new GsonFactory();
+        mJFactory = new JacksonFactory(); 
         mVerifier = new GoogleIdTokenVerifier(transport, mJFactory);
     }
 

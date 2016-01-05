@@ -44,7 +44,7 @@ public class Verify {
   /** Default JSON factory to use to deserialize JSON.   */
   private static final JacksonFactory JSON_FACTORY = new JacksonFactory();
 
-  /* Restituisce un array di due stringhe
+  /* Restituisce un array di due stringhe o null (in caso di autenticazione fallita)
    * res[0] : userId
    * res[1] : userEmail  */
   public static String[] getUserCredentials(String idToken, String accessToken) {
@@ -163,3 +163,4 @@ public class Verify {
     }
   }
 }
+
