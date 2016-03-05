@@ -29,21 +29,7 @@
     -->
     <h2>User's profile information</h2>
     <div id="profile"></div>
-    
-    <div id="userInfo">
-        <form id="userParameters" action="ServletLogin" method="post">
-            <input type="hidden" name="action" value="loginGooglePlus">
-            
-            <input id="id_name" type="text" name="name">
-            <input id="id_surname" type="text" name="surname">
-        <!--    <input id="id_email" type="email" name="email"> -->
-            <input id="id_token" type="text" name="idToken">
-            <input id="id_access_token" type="text" name="access_token">
-            
-            <input type="submit" value="submit">
-        </form>
-    </div>
-    
+        
 <!--
     <h2>Authentication Logs</h2>
     <pre id="authResult"></pre> -->
@@ -55,106 +41,9 @@
     <a href="https://developers.google.com/+/quickstart/javascript">
     https://developers.google.com/+/quickstart/javascript</a>.
   </div>
-<script type="text/javascript">
-var auth2 = {};
-
-/**  * Hides the sign in button and starts the post-authorization operations.
-     * @param {Object} authResult An Object which contains the access token and
-     * other authentication information. */
-function onSignInCallback(authResult) {
-    if (authResult.isSignedIn.get()) {
-        $('#authOps').show('slow');
-        $('#gConnect').hide();
-
-        var authResponse = authResult.currentUser.get().getAuthResponse();
-        $('#id_token').val(authResponse.id_token);
-        $('#id_access_token').val(authResponse.access_token);
-        
-        getProfileData();        
-      } 
-      else if (authResult['error'] || authResult.currentUser.get().getAuthResponse() === null) {
-        // There was an error, which means the user is not signed in.
-        // As an example, you can handle by writing to the console:
-        console.log('There was an error: ' + authResult['error']);
-        $('#authResult').append('Logged out');
-        $('#authOps').hide('slow');
-        $('#gConnect').show();
-      }
-
-      console.log('authResult', authResult);
-}
-
-/*  Calls the OAuth2 endpoint to disconnect the app for the user. */
-function disconnect() {
-    auth2.disconnect();
-}
-
-function getProfileData() {    
-    gapi.client.plus.people.get({'userId': 'me'}).then(function(res) { 
-        var profile = res.result; 
-        
-        var name = profile.name.givenName; 
-        var surname = profile.name.familyName;
-        
-        $('#id_name').val(name);        
-        $('#id_surname').val(surname); 
-     //   $('#userParameters').submit();     
-      }, function(err) {
-        var error = err.result;
-        $('#profile').empty();
-        $('#profile').append(error.message);
-      }
-    ); 
-}
-
-/* jQuery initialization */
-$(document).ready(function() {
-  $('#disconnect').click(disconnect);
-  $('#loaderror').hide();
-  if ($('meta')[0].content === 'YOUR_CLIENT_ID') {
-    alert('This sample requires your OAuth credentials (client ID) ' +
-        'from the Google APIs console:\n' +
-        '    https://code.google.com/apis/console/#:access\n\n' +
-        'Find and replace YOUR_CLIENT_ID with your client ID.'
-    );
-  }
-});
-
-/* Handler for when the sign-in state changes.
- * @param {boolean} isSignedIn The new signed in state. */
-function updateSignIn() {
-  console.log('update sign in state');
-  if (auth2.isSignedIn.get()) {
-    console.log('signed in');
-    onSignInCallback(gapi.auth2.getAuthInstance());
-  }else{
-    console.log('signed out');
-    onSignInCallback(gapi.auth2.getAuthInstance());
-  }
-}
-
-/**
- * This method sets up the sign-in listener after the client library loads.
- */
-function startApp() {
-    //gapi.load carica dinamicamente librerie js
-  gapi.load('auth2', function() {
-    gapi.client.load('plus','v1').then(function() {
-      gapi.signin2.render('signin-button', {
-          scope: 'https://www.googleapis.com/auth/plus.login',
-          fetch_basic_profile: false });
-      gapi.auth2.init({fetch_basic_profile: false,
-          scope:'https://www.googleapis.com/auth/plus.login'}).then(
-            function (){
-              console.log('init');
-              auth2 = gapi.auth2.getAuthInstance();
-              auth2.isSignedIn.listen(updateSignIn);
-              auth2.then(updateSignIn());
-            });
-    });
-  });
-}
-</script>
+    
+  <%@include file="/googleplus.jsp" %> 
+  
 </body>
 </html>
 
